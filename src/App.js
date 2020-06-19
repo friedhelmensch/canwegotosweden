@@ -14,7 +14,7 @@ function App() {
     const fetchData = async () => {
       const request = `https://api.covid19api.com/country/sweden/status/confirmed?from=${from.toISOString()}&to=${to.toISOString()}`;
       const result = await axios(request);
-
+      console.log(result.data);
       var datapoints = result.data;
 
       var newCases =
