@@ -3,6 +3,10 @@ import imgJa from "./sweden_ja.png";
 import imgNej from "./sweden_nej.png";
 import "./App.css";
 import axios from "axios";
+import { makeGetNewCases, getCasesPer100kResidents } from "./components/cases";
+
+const getCases = makeGetNewCases(axios);
+const residents = 10000000;
 
 function App() {
   const from = new Date(new Date().setDate(new Date().getDate() - 8));
@@ -12,22 +16,13 @@ function App() {
 
   useEffect(() => {
     const fetchData = async () => {
-      const request = `https://api.covid19api.com/country/sweden/status/confirmed?from=${from.toISOString()}&to=${to.toISOString()}`;
-      const result = await axios(request);
-      console.log(result.data);
-      var datapoints = result.data;
-
-      var newCases =
-        datapoints[datapoints.length - 1].Cases - datapoints[0].Cases;
-
-      const residents = 10000000;
-      const casesPer100k = newCases / (residents / 100000);
-
+      var newCases = await getCases(from, to);
+      const casesPer100k = getCasesPer100kResidents(newCases, residents);
       setData({ covidCases: casesPer100k });
     };
 
     fetchData();
-  }, []);
+  });
 
   return (
     <div className="App">
